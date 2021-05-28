@@ -27,7 +27,8 @@ inputs:
 runs:
   using: "composite"
   steps:
-    - run: |
+    - shell: bash
+      run: |
         metanorma site generate ${{ inputs.source-path }}                                 \
             -o ${{ inputs.output-dir }}                                                   \
             -c ${{ inputs.config-file }}                                                  \
