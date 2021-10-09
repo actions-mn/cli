@@ -1,24 +1,24 @@
 name: 'metanorma-site-gen'
-description: 'composite action which setup metanorma private GitHub packages for rubygems'
+description: 'composite action which help to run metanorma site generate'
 inputs:
   source-path:
-    description: 'personal access token (PAT)'
+    description: 'Source path, usually directory where configuration (manifest) file is'
     default: '.'
   output-dir:
     description: 'Output directory for generated site'
     default: site
   config-file:
-    description: 'Metanorma configuration file'
+    description: 'Metanorma configuration (mainfest) file'
     default: metanorma.yml
   agree-to-terms:
     description: 'Agree / Disagree with all third-party licensing terms presented (WARNING: do know what you are agreeing with!)'
-    default: false
+    default: '' # false
   no-install-fonts:
     description: 'Skip the font installation process'
-    default: false
+    default: '' # false
   continue-without-fonts:
     description: 'Continue processing even when fonts are missing'
-    default: false
+    default: '' # false
   # stylesheet:
   #   description: 'Stylesheet file path for rendering HTML page'
   # template-dir:
