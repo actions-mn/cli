@@ -1,0 +1,117 @@
+name: test
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+
+jobs:
+  test-site-gen-local:
+    name: Test ./site-gen/ action on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ ubuntu-latest, windows-latest, macos-latest ]
+    steps:
+    - uses: actions/checkout@v2
+
+    - uses: actions/checkout@v2
+      with:
+        repository: metanorma/mn-samples-iso
+        path: iso
+
+    - uses: actions-mn/setup@master
+
+    - uses: ./site-gen/
+      with:
+        source-path: iso
+        config-file: iso/metanorma.yml
+        agree-to-terms: true
+
+    - uses: andstor/file-existence-action@v1
+      with:
+        files: site/index.html
+
+  test-docker-site-gen-local:
+    name: Test ./docker-site-gen/ action on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ ubuntu-latest ]
+    steps:
+    - uses: actions/checkout@v2
+
+    - uses: actions/checkout@v2
+      with:
+        repository: metanorma/mn-samples-iso
+        path: iso
+
+    - uses: actions-mn/setup@master
+
+    - uses: ./docker-site-gen/
+      with:
+        source-path: iso
+        config-file: iso/metanorma.yml
+        agree-to-terms: true
+
+    - uses: andstor/file-existence-action@v1
+      with:
+        files: site/index.html
+
+  test-site-gen:
+    if: github.head_ref == 'main'
+    name: Test actions-mn/cli/site-gen@${{ github.head_ref }} action on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ ubuntu-latest, windows-latest, macos-latest ]
+    steps:
+    - uses: actions/checkout@v2
+
+    - uses: actions/checkout@v2
+      with:
+        repository: metanorma/mn-samples-iso
+        path: iso
+
+    - uses: actions-mn/setup@master
+
+    - uses: actions-mn/cli/site-gen@main
+      with:
+        source-path: iso
+        config-file: iso/metanorma.yml
+        agree-to-terms: true
+
+    - uses: andstor/file-existence-action@v1
+      with:
+        files: site/index.html
+
+  test-docker-site-gen:
+    if: github.head_ref == 'main'
+    name: Test actions-mn/cli/docker-site-gen@${{ github.head_ref }} action on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ ubuntu-latest ]
+    steps:
+    - uses: actions/checkout@v2
+
+    - uses: actions/checkout@v2
+      with:
+        repository: metanorma/mn-samples-iso
+        path: iso
+
+    - uses: actions-mn/setup@master
+
+    - uses: actions-mn/cli/docker-site-gen@main
+      with:
+        source-path: iso
+        config-file: iso/metanorma.yml
+        agree-to-terms: true
+
+    - uses: andstor/file-existence-action@v1
+      with:
+        files: site/index.html
