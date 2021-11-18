@@ -1,0 +1,37 @@
+name: metanorma-collection
+description: Render HTML pages from XML/YAML colection
+inputs:
+  manifest:
+    description: Metanorma collection mainfest file
+    required: true
+  cover-page:
+    description: Liquid template
+    required: true
+  output-dir:
+    description: Directory to save compiled files
+    default: '.'
+  formats:
+    description: Formats to generate
+    required: false
+  agree-to-terms:
+    description: 'Agree / Disagree with all third-party licensing terms presented (WARNING: do know what you are agreeing with!)'
+    default: '' # false
+  no-install-fonts:
+    description: 'Skip the font installation process'
+    default: '' # false
+  continue-without-fonts:
+    description: 'Continue processing even when fonts are missing'
+    default: '' # false
+
+runs:
+  using: "composite"
+  steps:
+    - shell: bash
+      run: |
+        metanorma collection ${{ inputs.config-file }}          \
+            ${{ inputs.format && '-x ' + inputs.format || '' }} \
+            -w ${{ inputs.output-dir }}                         \
+            -c ${{ inputs.cover-page }}                         \
+            ${{ inputs.agree-to-terms && '--' || '--no-' }}agree-to-terms                 \
+            ${{ inputs.continue-without-fonts && '--' || '--no-' }}continue-without-fonts \
+            ${{ inputs.no-install-fonts && '--' || '--no-' }}no-install-fonts             \
