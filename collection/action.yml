@@ -28,10 +28,9 @@ runs:
   steps:
     - shell: bash
       run: |
-        metanorma collection ${{ inputs.config-file }}          \
-            ${{ inputs.format && '-x ' + inputs.format || '' }} \
-            -w ${{ inputs.output-dir }}                         \
-            -c ${{ inputs.cover-page }}                         \
+        metanorma collection ${{ inputs.config-file }} -w ${{ inputs.output-dir }}        \
+            ${{ inputs.format && format('-x {0}', inputs.format) || '' }}                 \
+            -c ${{ inputs.cover-page }}                                                   \
             ${{ inputs.agree-to-terms && '--' || '--no-' }}agree-to-terms                 \
             ${{ inputs.continue-without-fonts && '--' || '--no-' }}continue-without-fonts \
             ${{ inputs.no-install-fonts && '--' || '--no-' }}no-install-fonts             \
