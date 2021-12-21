@@ -78,7 +78,7 @@ jobs:
 
     - uses: actions-mn/setup@master
 
-    - uses: actions-mn/cli/site-gen@main
+    - uses: actions-mn/cli/site-gen@main # context expression cannot be used instead main
       with:
         source-path: iso
         config-file: iso/metanorma.yml
@@ -106,7 +106,7 @@ jobs:
 
     - uses: actions-mn/setup@master
 
-    - uses: actions-mn/cli/docker-site-gen@main
+    - uses: actions-mn/cli/docker-site-gen@main # context expression cannot be used instead main
       with:
         source-path: iso
         config-file: iso/metanorma.yml
@@ -115,3 +115,32 @@ jobs:
     - uses: andstor/file-existence-action@v1
       with:
         files: site/index.html
+
+  test-new:
+    name: Test actions-mn/cli/new action on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ ubuntu-latest, windows-latest, macos-latest ]
+    steps:
+    - uses: actions/checkout@v2
+
+    - uses: actions-mn/setup@master
+
+    - uses: ./new/
+      with:
+        type: iso
+        doctype: international-standard
+        output-path: test
+
+    - uses: ./new/
+      with:
+        type: iso
+        doctype: international-standard
+        template: https://github.com/metanorma/mn-templates-iso
+        output-path: test-git
+
+    - uses: andstor/file-existence-action@v1
+      with:
+        files: test/document.adoc, test/metanorma.yml
