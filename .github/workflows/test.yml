@@ -115,3 +115,25 @@ jobs:
     - uses: andstor/file-existence-action@v1
       with:
         files: site/index.html
+
+  test-new:
+    name: Test actions-mn/cli/new action on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ ubuntu-latest, windows-latest, macos-latest ]
+    steps:
+    - uses: actions/checkout@v2
+
+    - uses: actions-mn/setup@master
+
+    - uses: ./new/
+      with:
+        type: iso
+        doctype: international-standard
+        output-path: test
+
+    - uses: andstor/file-existence-action@v1
+      with:
+        files: test/document.adoc, test/metanorma.yml
