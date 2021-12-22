@@ -144,3 +144,37 @@ jobs:
     - uses: andstor/file-existence-action@v1
       with:
         files: test/document.adoc, test/metanorma.yml
+
+  test-compile:
+    name: Test actions-mn/cli/compile action on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ ubuntu-latest, windows-latest, macos-latest ]
+    steps:
+    - uses: actions/checkout@v2
+
+    - uses: actions-mn/setup@master
+
+    - run: mkdir result1
+    - uses: ./compile/
+      with:
+        input-file: README.adoc
+        type: iso
+        extensions: html
+        output-dir: ./result1
+        no-install-fonts: true
+
+    - run: mkdir result2
+    - uses: ./compile/
+      with:
+        input-file: README.adoc
+        type: iso
+        extensions: doc
+        output-dir: result2
+        agree-to-terms: true
+
+    - uses: andstor/file-existence-action@v1
+      with:
+        files: result1/README.html, result2/README.doc
