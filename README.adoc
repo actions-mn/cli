@@ -1,0 +1,9 @@
+= cli
+
+Collection of actions for `metanorma-cli`
+
+* ./collection/action.yml[collection]
+* ./compile/action.yml[compile]
+* ./docker-site-gen/action.yml[docker-site-gen]
+* ./new/action.yml[new]
+* ./site-gen/action.yml[site generator]
