@@ -178,3 +178,52 @@ jobs:
     - uses: andstor/file-existence-action@v1
       with:
         files: result1/README.html, result2/README.doc
+
+  test-use-bundler:
+    name: Test actions-mn/cli actions on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ ubuntu-latest, windows-latest, macos-latest ]
+    steps:
+    - uses: actions/checkout@v2
+
+    - run: |
+        echo 'source "https://rubygems.org"' > Gemfile
+        echo 'gem "sassc"' >> Gemfile
+        echo 'gem "metanorma-cli"' >> Gemfile
+
+    - uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: '2.7'
+        bundler-cache: true
+
+    - run: mkdir result
+    - uses: ./compile/
+      with:
+        input-file: README.adoc
+        type: iso
+        extensions: html
+        output-dir: ./result
+        no-install-fonts: true
+        use-bundler: true
+
+    - uses: ./new/
+      with:
+        type: iso
+        doctype: international-standard
+        output-path: test
+        use-bundler: true
+
+    - uses: actions/checkout@v2
+      with:
+        repository: metanorma/mn-samples-iso
+        path: iso
+
+    - uses: ./site-gen/
+      with:
+        source-path: iso
+        config-file: iso/metanorma.yml
+        agree-to-terms: true
+        use-bundler: true

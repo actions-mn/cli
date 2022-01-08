@@ -22,14 +22,18 @@ inputs:
   continue-without-fonts:
     description: 'Continue processing even when fonts are missing'
     default: '' # false
+  use-bundler:
+    description: 'Run in bundler'
+    default: '' # false
 
 runs:
   using: "composite"
   steps:
     - shell: bash
       run: |
-        metanorma collection ${{ inputs.config-file }} -w ${{ inputs.output-dir }}        \
-            ${{ inputs.format && format('-x {0}', inputs.format) || '' }}                 \
+        ${{ inputs.use-bundler && 'bundle exec' || '' }}                                  \
+            metanorma collection ${{ inputs.manifest }} -w ${{ inputs.output-dir }}       \
+            ${{ inputs.format && format('-x {0}', inputs.formats) || '' }}                \
             -c ${{ inputs.cover-page }}                                                   \
             ${{ inputs.agree-to-terms && '--' || '--no-' }}agree-to-terms                 \
             ${{ inputs.continue-without-fonts && '--' || '--no-' }}continue-without-fonts \
