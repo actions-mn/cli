@@ -19,13 +19,17 @@ inputs:
   template:
     description: Git hosted remote or local FS template skeleton
     default: '' # false
+  use-bundler:
+    description: 'Run in bundler'
+    default: '' # false
 
 runs:
   using: "composite"
   steps:
     - shell: bash
       run: |
-        metanorma new ${{ inputs.output-path }}                     \
+        ${{ inputs.use-bundler && 'bundle exec' || '' }}            \
+            metanorma new ${{ inputs.output-path }}                 \
             -t ${{ inputs.type }}                                   \
             -d ${{ inputs.doctype }}                                \
             ${{ inputs.overwrite && '--' || '--no-' }}overwrite     \

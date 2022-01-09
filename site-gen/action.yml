@@ -19,6 +19,9 @@ inputs:
   continue-without-fonts:
     description: 'Continue processing even when fonts are missing'
     default: '' # false
+  use-bundler:
+    description: 'Run in bundler'
+    default: '' # false
   # stylesheet:
   #   description: 'Stylesheet file path for rendering HTML page'
   # template-dir:
@@ -29,7 +32,8 @@ runs:
   steps:
     - shell: bash
       run: |
-        metanorma site generate ${{ inputs.source-path }}                                 \
+        ${{ inputs.use-bundler && 'bundle exec' || '' }}                                  \
+            metanorma site generate ${{ inputs.source-path }}                             \
             -o ${{ inputs.output-dir }}                                                   \
             -c ${{ inputs.config-file }}                                                  \
             ${{ inputs.agree-to-terms && '--' || '--no-' }}agree-to-terms                 \

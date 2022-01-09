@@ -48,13 +48,17 @@ inputs:
   no-progress:
     description: Don't show progress for long running tasks (like download)
     default: 'true'
+  use-bundler:
+    description: 'Run in bundler'
+    default: '' # false
 
 runs:
   using: "composite"
   steps:
     - shell: bash
       run: |
-        metanorma compile ${{ inputs.input-file }} --type ${{ inputs.type }}                \
+        ${{ inputs.use-bundler && 'bundle exec' || '' }}                                    \
+            metanorma compile ${{ inputs.input-file }} --type ${{ inputs.type }}            \
             ${{ inputs.extensions && format('--extensions={0}', inputs.extensions) || '' }} \
             ${{ inputs.format && format('--format={0}', inputs.format) || '' }}             \
             ${{ inputs.require && format('--require={0}', inputs.require) || '' }}          \
