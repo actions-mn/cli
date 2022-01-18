@@ -33,7 +33,7 @@ runs:
       run: |
         ${{ inputs.use-bundler && 'bundle exec' || '' }}                                  \
             metanorma collection ${{ inputs.manifest }} -w ${{ inputs.output-dir }}       \
-            ${{ inputs.format && format('-x {0}', inputs.formats) || '' }}                \
+            ${{ inputs.formats && format('-x {0}', inputs.formats) || '' }}                \
             -c ${{ inputs.cover-page }}                                                   \
             ${{ inputs.agree-to-terms && '--' || '--no-' }}agree-to-terms                 \
             ${{ inputs.continue-without-fonts && '--' || '--no-' }}continue-without-fonts \
