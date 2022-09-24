@@ -32,8 +32,9 @@ runs:
   steps:
     - shell: bash
       run: |
+        cd ${{ inputs.source-path }}
         ${{ inputs.use-bundler && 'bundle exec' || '' }}                                  \
-            metanorma site generate ${{ inputs.source-path }}                             \
+            metanorma site generate .                                                     \
             -o ${{ inputs.output-dir }}                                                   \
             -c ${{ inputs.config-file }}                                                  \
             ${{ inputs.agree-to-terms && '--' || '--no-' }}agree-to-terms                 \
