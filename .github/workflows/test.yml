@@ -26,7 +26,7 @@ jobs:
     - uses: ./site-gen/
       with:
         source-path: iso
-        config-file: iso/metanorma.yml
+        config-file: metanorma.yml
         agree-to-terms: true
 
     - uses: andstor/file-existence-action@v1
@@ -224,6 +224,6 @@ jobs:
     - uses: ./site-gen/
       with:
         source-path: iso
-        config-file: iso/metanorma.yml
+        config-file: metanorma.yml
         agree-to-terms: true
         use-bundler: true
