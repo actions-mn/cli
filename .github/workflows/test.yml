@@ -81,7 +81,7 @@ jobs:
     - uses: actions-mn/cli/site-gen@main # context expression cannot be used instead main
       with:
         source-path: iso
-        config-file: iso/metanorma.yml
+        config-file: metanorma.yml
         agree-to-terms: true
 
     - uses: andstor/file-existence-action@v1
