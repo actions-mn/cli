@@ -241,10 +241,10 @@ jobs:
       fail-fast: false
       matrix:
         flavors:
-        - bsi
+        # - bsi
         - ribose
-        - ribose bsi
-        - ribose bsi nist
+        # - ribose bsi
+        # - ribose bsi nist
     steps:
     - uses: actions/checkout@v3
 
