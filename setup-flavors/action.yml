@@ -17,7 +17,7 @@ runs:
     - if: inputs.github-pakages-token != ""
       uses: metanorma/ci/gh-rubygems-setup-action@main
       with:
-        token: ${{ secrets.github-pakages-token }}
+        token: ${{ inputs.github-pakages-token }}
 
     - shell: python
       run: |
