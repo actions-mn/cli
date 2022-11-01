@@ -22,7 +22,7 @@ inputs:
 
 runs:
   using: "docker"
-  image: "docker://metanorma/mn:latest"
+  image: "docker://metanorma/mtanorma:latest"
   entrypoint: metanorma
   args:
     - site
