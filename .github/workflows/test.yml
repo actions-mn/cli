@@ -227,3 +227,52 @@ jobs:
         config-file: metanorma.yml
         agree-to-terms: true
         use-bundler: true
+
+  test-setup-flavors:
+    if: github.head_ref == 'main'
+    name: Test actions-mn/cli/setup-flavors@${{ github.head_ref }} action on ${{ matrix.os }}
+    runs-on: ubuntu-latest
+    container:
+      image: metanorma/metanorma:latest
+    strategy:
+      fail-fast: false
+      matrix:
+        flavors:
+        - bsi
+        - ribose
+        - ribose bsi
+        - ribose bsi nist
+    steps:
+    - uses: actions/checkout@v3
+
+    - if: contains(matrix.flavors, 'ribose')
+      uses: actions/checkout@v3
+      with:
+        repository: metanorma/mn-samples-ribose
+        path: ribose
+
+    - if: contains(matrix.flavors, 'bsi')
+      uses: actions/checkout@v3
+      with:
+        repository: metanorma/mn-samples-bsi
+        path: bsi
+        token: ${{ secrets.METANORMA_CI_PAT_TOKEN }}
+
+    - uses: ./setup-flavors
+      with:
+        extra-flavors: ribose nist bsi
+        github-pakages-token: ${{ secrets.METANORMA_CI_PAT_TOKEN }}
+
+    - if: contains(matrix.flavors, 'ribose')
+      uses: ./site-gen/
+      with:
+        source-path: ribose
+        config-file: metanorma.yml
+        agree-to-terms: true
+
+    - if: contains(matrix.flavors, 'bsi')
+      uses: ./site-gen/
+      with:
+        source-path: bsi
+        config-file: metanorma.yml
+        agree-to-terms: true

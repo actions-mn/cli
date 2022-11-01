@@ -1,0 +1,26 @@
+name: 'docker-metanorma-run'
+description: 'Composite action which help to install custom/private flavors'
+inputs:
+  extra-flavors:
+    description: 'Space separated list of extra flavor extensions'
+    default: ''
+  github-pakages-token:
+    description: 'GitHub token to access '
+    default: ''
+
+runs:
+  using: "composite"
+  steps:
+    - shell: bash
+      run: apt-get update -y && apt-get install -y gcc g++ ruby-dev
+
+    - if: inputs.github-pakages-token != ""
+      uses: metanorma/ci/gh-rubygems-setup-action@main
+      with:
+        token: ${{ secrets.github-pakages-token }}
+
+    - shell: python
+      run: |
+        for flavor in ${{ inputs.extra-flavors }}; then
+          bundle add metanorma-${flavor}
+        done
