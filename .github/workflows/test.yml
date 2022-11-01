@@ -5,6 +5,10 @@ on:
     branches: [ main ]
   pull_request:
 
+concurrency:
+  group: '${{ github.workflow }}-${{ github.head_ref || github.ref_name }}'
+  cancel-in-progress: true
+
 jobs:
   test-site-gen-local:
     name: Test ./site-gen/ action on ${{ matrix.os }}
@@ -229,7 +233,6 @@ jobs:
         use-bundler: true
 
   test-setup-flavors:
-    if: github.head_ref == 'main'
     name: Test actions-mn/cli/setup-flavors@${{ github.head_ref }} action on ${{ matrix.os }}
     runs-on: ubuntu-latest
     container:
