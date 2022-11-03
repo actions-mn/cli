@@ -14,12 +14,24 @@ runs:
     - shell: bash
       run: apt-get update -y && apt-get install -y gcc g++ ruby-dev
 
-    - if: ${{ inputs.github-pakages-token != "" }}
-      uses: metanorma/ci/gh-rubygems-setup-action@main
-      with:
-        token: ${{ inputs.github-pakages-token }}
+    - shell: bash
+      run: |
+        if [ -f "~/.gemrc" ]; then
+          echo "WARNING! Overwriting ~/.gemrc."
+        fi
+        cat << 'EOF' > ~/.gemrc
+        ---
+        :backtrace: false
+        :bulk_threshold: 1000
+        :sources:
+        - https://x-access-token:${{ inputs.github-pakages-token }}@rubygems.pkg.github.com/metanorma/
+        - https://rubygems.org/
+        :update_sources: true
+        :verbose: true
+        EOF
+        echo "~/.gemrc generated!"
 
-    - shell: python
+    - shell: bash
       run: |
         for flavor in ${{ inputs.extra-flavors }}; then
           bundle add metanorma-${flavor}
