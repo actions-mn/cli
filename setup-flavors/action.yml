@@ -16,20 +16,10 @@ runs:
 
     - shell: bash
       run: |
-        if [ -f "~/.gemrc" ]; then
-          echo "WARNING! Overwriting ~/.gemrc."
+        if [ "${{ inputs.github-pakages-token }}" != "" ]; then
+          curl -LO --retry 3 https://raw.githubusercontent.com/metanorma/ci/main/gh-rubygems-setup-action/gen-gemrc-for-gh-packages.sh | bash ${{ inputs.github-pakages-token }}
+          curl -LO --retry 3 https://raw.githubusercontent.com/metanorma/ci/main/gh-rubygems-setup-action/gen-bundle-config-for-gh-packages.sh | bash ${{ inputs.github-pakages-token }} metanorma --global
         fi
-        cat << 'EOF' > ~/.gemrc
-        ---
-        :backtrace: false
-        :bulk_threshold: 1000
-        :sources:
-        - https://x-access-token:${{ inputs.github-pakages-token }}@rubygems.pkg.github.com/metanorma/
-        - https://rubygems.org/
-        :update_sources: true
-        :verbose: true
-        EOF
-        echo "~/.gemrc generated!"
 
     - shell: bash
       run: |
