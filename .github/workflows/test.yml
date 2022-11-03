@@ -18,9 +18,9 @@ jobs:
       matrix:
         os: [ ubuntu-latest, windows-latest, macos-latest ]
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
 
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
       with:
         repository: metanorma/mn-samples-iso
         path: iso
@@ -45,9 +45,9 @@ jobs:
       matrix:
         os: [ ubuntu-latest ]
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
 
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
       with:
         repository: metanorma/mn-samples-iso
         path: iso
@@ -73,9 +73,9 @@ jobs:
       matrix:
         os: [ ubuntu-latest, windows-latest, macos-latest ]
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
 
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
       with:
         repository: metanorma/mn-samples-iso
         path: iso
@@ -101,9 +101,9 @@ jobs:
       matrix:
         os: [ ubuntu-latest ]
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
 
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
       with:
         repository: metanorma/mn-samples-iso
         path: iso
@@ -128,7 +128,7 @@ jobs:
       matrix:
         os: [ ubuntu-latest, windows-latest, macos-latest ]
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
 
     - uses: actions-mn/setup@master
 
@@ -157,7 +157,7 @@ jobs:
       matrix:
         os: [ ubuntu-latest, windows-latest, macos-latest ]
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
 
     - uses: actions-mn/setup@master
 
@@ -191,11 +191,10 @@ jobs:
       matrix:
         os: [ ubuntu-latest, windows-latest, macos-latest ]
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
 
     - run: |
         echo 'source "https://rubygems.org"' > Gemfile
-        echo 'gem "sassc"' >> Gemfile
         echo 'gem "metanorma-cli"' >> Gemfile
 
     - uses: ruby/setup-ruby@v1
@@ -220,10 +219,13 @@ jobs:
         output-path: test
         use-bundler: true
 
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
       with:
         repository: metanorma/mn-samples-iso
         path: iso
+
+    - run: bundle install
+      working-directory: iso
 
     - uses: ./site-gen/
       with:
