@@ -17,8 +17,8 @@ runs:
     - shell: bash
       run: |
         if [ "${{ inputs.github-pakages-token }}" != "" ]; then
-          curl -LO --retry 3 https://raw.githubusercontent.com/metanorma/ci/main/gh-rubygems-setup-action/gen-gemrc-for-gh-packages.sh | bash -s ${{ inputs.github-pakages-token }}
-          curl -LO --retry 3 https://raw.githubusercontent.com/metanorma/ci/main/gh-rubygems-setup-action/gen-bundle-config-for-gh-packages.sh | bash -s ${{ inputs.github-pakages-token }} metanorma --global
+          curl -L --retry 3 https://raw.githubusercontent.com/metanorma/ci/main/gh-rubygems-setup-action/gen-gemrc-for-gh-packages.sh | bash -s -- "${{ inputs.github-pakages-token }}"
+          curl -L --retry 3 https://raw.githubusercontent.com/metanorma/ci/main/gh-rubygems-setup-action/gen-bundle-config-for-gh-packages.sh | bash -s -- "${{ inputs.github-pakages-token }}" metanorma --global
         fi
 
     - shell: bash
