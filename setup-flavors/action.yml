@@ -33,6 +33,6 @@ runs:
 
     - shell: bash
       run: |
-        for flavor in ${{ inputs.extra-flavors }}; then
+        for flavor in ${{ inputs.extra-flavors }}; do
           bundle add metanorma-${flavor}
         done

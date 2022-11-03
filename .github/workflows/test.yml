@@ -241,10 +241,10 @@ jobs:
       fail-fast: false
       matrix:
         flavors:
-        # - bsi
         - ribose
-        # - ribose bsi
-        # - ribose bsi nist
+        - bsi
+        - ribose bsi
+        - ribose bsi nist
     steps:
     - uses: actions/checkout@v3
 
@@ -263,7 +263,7 @@ jobs:
 
     - uses: ./setup-flavors
       with:
-        extra-flavors: ribose nist bsi
+        extra-flavors: ${{ matrix.flavors }}
         github-pakages-token: ${{ secrets.METANORMA_CI_PAT_TOKEN }}
 
     - if: contains(matrix.flavors, 'ribose')
