@@ -20,9 +20,6 @@ runs:
           curl -L --retry 3 https://raw.githubusercontent.com/metanorma/ci/main/gh-rubygems-setup-action/gen-bundle-config-for-gh-packages.sh | bash -s -- "${{ inputs.github-pakages-token }}" metanorma --global
         fi
 
-        file ~/.bundle/config
-        file ~/.gemrc
-
         for flavor in ${{ inputs.extra-flavors }}; do
           bundle add metanorma-${flavor}
         done
