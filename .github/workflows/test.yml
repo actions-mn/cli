@@ -74,14 +74,14 @@ jobs:
         github-pakages-token: ${{ secrets.METANORMA_CI_PAT_TOKEN }}
 
     - if: contains(matrix.flavors, 'ribose')
-      uses: ./site-gen/
+      uses: actions-mn/site-gen@main
       with:
         source-path: ribose
         config-file: metanorma.yml
         agree-to-terms: true
 
     - if: contains(matrix.flavors, 'bsi')
-      uses: ./site-gen/
+      uses: actions-mn/site-gen@main
       with:
         source-path: bsi
         config-file: metanorma.yml
