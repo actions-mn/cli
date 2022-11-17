@@ -11,14 +11,14 @@ inputs:
 runs:
   using: "composite"
   steps:
+    - if: inputs.github-pakages-token != ""
+      uses: metanorma/ci/gh-rubygems-setup-action@main
+      with:
+        token: ${{ github-pakages-token }}
+
     - shell: bash
       run: |
         apt-get update -y && apt-get install -y gcc g++ ruby-dev
-
-        if [ "${{ inputs.github-pakages-token }}" != "" ]; then
-          curl -L --retry 3 https://raw.githubusercontent.com/metanorma/ci/main/gh-rubygems-setup-action/gen-gemrc-for-gh-packages.sh | bash -s -- "${{ inputs.github-pakages-token }}"
-          curl -L --retry 3 https://raw.githubusercontent.com/metanorma/ci/main/gh-rubygems-setup-action/gen-bundle-config-for-gh-packages.sh | bash -s -- "${{ inputs.github-pakages-token }}" metanorma --global
-        fi
 
         for flavor in ${{ inputs.extra-flavors }}; do
           bundle add metanorma-${flavor}
