@@ -21,7 +21,7 @@ runs:
           source gen-gemrc-for-gh-packages.sh "${{ inputs.github-pakages-token }}"
           curl -L --retry 3 https://raw.githubusercontent.com/metanorma/ci/8808124694a5ca204d5a278519ad6fd2ad5a4e84/gh-rubygems-setup-action/gen-bundle-config-for-gh-packages.sh > gen-bundle-config-for-gh-packages.sh
           chmod +x gen-bundle-config-for-gh-packages.sh
-          source gen-bundle-config-for-gh-packages.sh "${{ inputs.github-pakages-token }}" metanorma --global
+          source gen-bundle-config-for-gh-packages.sh "${{ inputs.github-pakages-token }}" metanorma
         fi
 
         for flavor in ${{ inputs.extra-flavors }}; do
