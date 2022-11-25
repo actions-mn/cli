@@ -5,117 +5,11 @@ on:
     branches: [ main ]
   pull_request:
 
+concurrency:
+  group: '${{ github.workflow }}-${{ github.head_ref || github.ref_name }}'
+  cancel-in-progress: true
+
 jobs:
-  test-site-gen-local:
-    name: Test ./site-gen/ action on ${{ matrix.os }}
-    runs-on: ${{ matrix.os }}
-    strategy:
-      fail-fast: false
-      matrix:
-        os: [ ubuntu-latest, windows-latest, macos-latest ]
-    steps:
-    - uses: actions/checkout@v2
-
-    - uses: actions/checkout@v2
-      with:
-        repository: metanorma/mn-samples-iso
-        path: iso
-
-    - uses: actions-mn/setup@master
-
-    - uses: ./site-gen/
-      with:
-        source-path: iso
-        config-file: metanorma.yml
-        agree-to-terms: true
-
-    - uses: andstor/file-existence-action@v1
-      with:
-        files: site/index.html
-
-  test-docker-site-gen-local:
-    name: Test ./docker-site-gen/ action on ${{ matrix.os }}
-    runs-on: ${{ matrix.os }}
-    strategy:
-      fail-fast: false
-      matrix:
-        os: [ ubuntu-latest ]
-    steps:
-    - uses: actions/checkout@v2
-
-    - uses: actions/checkout@v2
-      with:
-        repository: metanorma/mn-samples-iso
-        path: iso
-
-    - uses: actions-mn/setup@master
-
-    - uses: ./docker-site-gen/
-      with:
-        source-path: iso
-        config-file: iso/metanorma.yml
-        agree-to-terms: true
-
-    - uses: andstor/file-existence-action@v1
-      with:
-        files: site/index.html
-
-  test-site-gen:
-    if: github.head_ref == 'main'
-    name: Test actions-mn/cli/site-gen@${{ github.head_ref }} action on ${{ matrix.os }}
-    runs-on: ${{ matrix.os }}
-    strategy:
-      fail-fast: false
-      matrix:
-        os: [ ubuntu-latest, windows-latest, macos-latest ]
-    steps:
-    - uses: actions/checkout@v2
-
-    - uses: actions/checkout@v2
-      with:
-        repository: metanorma/mn-samples-iso
-        path: iso
-
-    - uses: actions-mn/setup@master
-
-    - uses: actions-mn/cli/site-gen@main # context expression cannot be used instead main
-      with:
-        source-path: iso
-        config-file: metanorma.yml
-        agree-to-terms: true
-
-    - uses: andstor/file-existence-action@v1
-      with:
-        files: site/index.html
-
-  test-docker-site-gen:
-    if: github.head_ref == 'main'
-    name: Test actions-mn/cli/docker-site-gen@${{ github.head_ref }} action on ${{ matrix.os }}
-    runs-on: ${{ matrix.os }}
-    strategy:
-      fail-fast: false
-      matrix:
-        os: [ ubuntu-latest ]
-    steps:
-    - uses: actions/checkout@v2
-
-    - uses: actions/checkout@v2
-      with:
-        repository: metanorma/mn-samples-iso
-        path: iso
-
-    - uses: actions-mn/setup@master
-
-    - uses: actions-mn/cli/docker-site-gen@main # context expression cannot be used instead main
-      with:
-        source-path: iso
-        config-file: iso/metanorma.yml
-        agree-to-terms: true
-
-    - uses: andstor/file-existence-action@v1
-      with:
-        files: site/index.html
-
   test-new:
     name: Test actions-mn/cli/new action on ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
@@ -124,9 +18,9 @@ jobs:
       matrix:
         os: [ ubuntu-latest, windows-latest, macos-latest ]
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
 
-    - uses: actions-mn/setup@master
+    - uses: actions-mn/setup@main
 
     - uses: ./new/
       with:
@@ -145,85 +39,105 @@ jobs:
       with:
         files: test/document.adoc, test/metanorma.yml
 
-  test-compile:
-    name: Test actions-mn/cli/compile action on ${{ matrix.os }}
-    runs-on: ${{ matrix.os }}
+  test-setup-flavors-docker:
+    name: Test actions-mn/cli/setup-flavors@${{ github.head_ref }} action on ${{ matrix.os }}
+    runs-on: ubuntu-latest
+    container:
+      image: metanorma/metanorma:latest
     strategy:
       fail-fast: false
       matrix:
-        os: [ ubuntu-latest, windows-latest, macos-latest ]
+        flavors:
+        - ribose
+        - bsi
+        - ribose bsi
+        - ribose bsi nist
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
 
-    - uses: actions-mn/setup@master
-
-    - run: mkdir result1
-    - uses: ./compile/
+    - if: contains(matrix.flavors, 'ribose')
+      uses: actions/checkout@v3
       with:
-        input-file: README.adoc
-        type: iso
-        extensions: html
-        output-dir: ./result1
-        no-install-fonts: true
+        repository: metanorma/mn-samples-ribose
+        path: ribose
 
-    - run: mkdir result2
-    - uses: ./compile/
+    - if: contains(matrix.flavors, 'bsi')
+      uses: actions/checkout@v3
       with:
-        input-file: README.adoc
-        type: iso
-        extensions: doc
-        output-dir: result2
+        repository: metanorma/mn-samples-bsi
+        path: bsi
+        token: ${{ secrets.METANORMA_CI_PAT_TOKEN }}
+
+    - uses: ./setup-flavors
+      with:
+        extra-flavors: ${{ matrix.flavors }}
+        github-pakages-token: ${{ secrets.METANORMA_CI_PAT_TOKEN }}
+
+    - if: contains(matrix.flavors, 'ribose')
+      uses: actions-mn/site-gen@main
+      with:
+        source-path: ribose
+        config-file: metanorma.yml
         agree-to-terms: true
 
-    - uses: andstor/file-existence-action@v1
+    - if: contains(matrix.flavors, 'bsi')
+      uses: actions-mn/site-gen@main
       with:
-        files: result1/README.html, result2/README.doc
+        source-path: bsi
+        config-file: metanorma.yml
+        agree-to-terms: true
 
-  test-use-bundler:
-    name: Test actions-mn/cli actions on ${{ matrix.os }}
-    runs-on: ${{ matrix.os }}
+  test-setup-flavors:
+    name: Test actions-mn/cli/setup-flavors@${{ github.head_ref }} action on ${{ matrix.os }}
+    runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
-        os: [ ubuntu-latest, windows-latest, macos-latest ]
+        flavors:
+        - ribose
+        - bsi
+        - ribose bsi
+        - ribose bsi nist
     steps:
-    - uses: actions/checkout@v2
-
-    - run: |
-        echo 'source "https://rubygems.org"' > Gemfile
-        echo 'gem "sassc"' >> Gemfile
-        echo 'gem "metanorma-cli"' >> Gemfile
+    - uses: actions/checkout@v3
 
     - uses: ruby/setup-ruby@v1
       with:
-        ruby-version: '2.7'
-        bundler-cache: true
+        ruby-version: '3.1'
 
-    - run: mkdir result
-    - uses: ./compile/
-      with:
-        input-file: README.adoc
-        type: iso
-        extensions: html
-        output-dir: ./result
-        no-install-fonts: true
-        use-bundler: true
+    - run: gem install metanorma-cli
 
-    - uses: ./new/
+    - if: contains(matrix.flavors, 'ribose')
+      uses: actions/checkout@v3
       with:
-        type: iso
-        doctype: international-standard
-        output-path: test
-        use-bundler: true
+        repository: metanorma/mn-samples-ribose
+        path: ribose
 
-    - uses: actions/checkout@v2
+    - if: contains(matrix.flavors, 'bsi')
+      uses: actions/checkout@v3
       with:
-        repository: metanorma/mn-samples-iso
-        path: iso
+        repository: metanorma/mn-samples-bsi
+        path: bsi
+        token: ${{ secrets.METANORMA_CI_PAT_TOKEN }}
 
-    - uses: ./site-gen/
+    - uses: ./setup-flavors
       with:
-        source-path: iso
+        extra-flavors: ${{ matrix.flavors }}
+        github-pakages-token: ${{ secrets.METANORMA_CI_PAT_TOKEN }}
+        use-bundler: false
+
+    - if: contains(matrix.flavors, 'ribose')
+      uses: actions-mn/site-gen@main
+      with:
+        source-path: ribose
         config-file: metanorma.yml
         agree-to-terms: true
-        use-bundler: true
+        use-bundler: false
+
+    - if: contains(matrix.flavors, 'bsi')
+      uses: actions-mn/site-gen@main
+      with:
+        source-path: bsi
+        config-file: metanorma.yml
+        agree-to-terms: true
+        use-bundler: false
