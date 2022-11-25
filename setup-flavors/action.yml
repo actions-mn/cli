@@ -5,8 +5,11 @@ inputs:
     description: 'Space separated list of extra flavor extensions'
     default: ''
   github-pakages-token:
-    description: 'GitHub token to access '
+    description: 'GitHub token to access gems'
     default: ''
+  use-bundler:
+    description: 'Use "bundler add" instead "gem install"'
+    default: 'true'
 
 runs:
   using: "composite"
@@ -25,5 +28,13 @@ runs:
         fi
 
         for flavor in ${{ inputs.extra-flavors }}; do
-          bundle add metanorma-${flavor}
+          if [ "${{ inputs.use-bundler }}" = "true" ]; then
+            if [ "${flavor}" = "bsi" -o "${flavor}" = "nist" ]; then
+              bundle add metanorma-${flavor} --source https://rubygems.pkg.github.com/metanorma
+            else
+              bundle add metanorma-${flavor}
+            fi
+          else
+            gem install metanorma-${flavor}
+          fi
         done
