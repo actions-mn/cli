@@ -37,4 +37,13 @@ runs:
           else
             gem install metanorma-${flavor}
           fi
+
+          if [ "${flavor}" = "bsi" ]; then
+            if ! command -v fontist &> /dev/null; then
+              gem install fontist
+            fi
+            fontist update
+            fontist repo setup metanorma https://metanorma-ci:${{ inputs.github-pakages-token }}@github.com/metanorma/fontist-formulas-private
+            fontist repo update metanorma
+          fi
         done
