@@ -1,10 +1,6 @@
 = cli
 
-Collection of actions for `metanorma-cli`
+Collection of internal actions for `metanorma-cli`
 
 * link:./collection/action.yml[collection]
-* link:./compile/action.yml[compile]
-* link:./docker-site-gen/action.yml[docker-site-gen]
 * link:./new/action.yml[new]
-* link:./site-gen/action.yml[site generator]
-* link:./setup-flavors/action.yml[add non-default flavors/processors to metanorma]
