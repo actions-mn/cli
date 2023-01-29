@@ -22,6 +22,9 @@ inputs:
   use-bundler:
     description: 'Run in bundler'
     default: '' # false
+  ensure-manifest:
+    description: 'Generate minimal metanorma.yml manifest if missing'
+    default: '' # false
 
 runs:
   using: "composite"
@@ -35,3 +38,17 @@ runs:
             ${{ inputs.overwrite && '--' || '--no-' }}overwrite     \
             ${{ inputs.no-progress && '--' || '--no-' }}no-progress \
             ${{ inputs.template && format('-l {0}', inputs.template) || '' }}
+
+    - shell: bash
+      run: |
+        if [ ! -f ${{ inputs.output-path }}/metanorma.yml -a "${{ inputs.output-path }}" = "true" ]; then
+          cat << 'EOF' > ${{ inputs.output-path }}/metanorma.yml
+        metanorma:
+          source:
+            files:
+              - document.adoc
+        EOF
+          echo "${{ inputs.output-path }}/metanorma.yml generated."
+        fi
+        
+

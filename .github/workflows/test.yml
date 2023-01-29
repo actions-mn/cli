@@ -35,6 +35,6 @@ jobs:
         template: https://github.com/metanorma/mn-templates-iso
         output-path: test-git
 
-    - uses: andstor/file-existence-action@v1
+    - uses: andstor/file-existence-action@v2
       with:
         files: test/document.adoc, test/metanorma.yml
