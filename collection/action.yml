@@ -16,12 +16,15 @@ inputs:
   agree-to-terms:
     description: 'Agree / Disagree with all third-party licensing terms presented (WARNING: do know what you are agreeing with!)'
     default: '' # false
-  no-install-fonts:
-    description: 'Skip the font installation process'
-    default: '' # false
+  install-fonts:
+    description: 'To allow skip the font installation process'
+    default: 'true'
   continue-without-fonts:
     description: 'Continue processing even when fonts are missing'
     default: '' # false
+  no-progress:
+    description: Don't show progress for long running tasks (like download)
+    default: 'true'
   use-bundler:
     description: 'Run in bundler'
     default: '' # false
@@ -33,8 +36,9 @@ runs:
       run: |
         ${{ inputs.use-bundler && 'bundle exec' || '' }}                                  \
             metanorma collection ${{ inputs.manifest }} -w ${{ inputs.output-dir }}       \
-            ${{ inputs.formats && format('-x {0}', inputs.formats) || '' }}                \
+            ${{ inputs.formats && format('-x {0}', inputs.formats) || '' }}               \
             -c ${{ inputs.cover-page }}                                                   \
             ${{ inputs.agree-to-terms && '--' || '--no-' }}agree-to-terms                 \
             ${{ inputs.continue-without-fonts && '--' || '--no-' }}continue-without-fonts \
-            ${{ inputs.no-install-fonts && '--' || '--no-' }}no-install-fonts             \
+            ${{ inputs.install-fonts && '--' || '--no-' }}install-fonts                   \
+            ${{ inputs.no-progress == 'true' && '--no-' || '' }}progress

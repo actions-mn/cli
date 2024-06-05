@@ -31,12 +31,12 @@ runs:
   steps:
     - shell: bash
       run: |
-        ${{ inputs.use-bundler && 'bundle exec' || '' }}            \
-            metanorma new ${{ inputs.output-path }}                 \
-            -t ${{ inputs.type }}                                   \
-            -d ${{ inputs.doctype }}                                \
-            ${{ inputs.overwrite && '--' || '--no-' }}overwrite     \
-            ${{ inputs.no-progress && '--' || '--no-' }}no-progress \
+        ${{ inputs.use-bundler && 'bundle exec' || '' }}                 \
+            metanorma new ${{ inputs.output-path }}                      \
+            -t ${{ inputs.type }}                                        \
+            -d ${{ inputs.doctype }}                                     \
+            ${{ inputs.overwrite && '--' || '--no-' }}overwrite          \
+            ${{ inputs.no-progress == 'true' && '--no-' || '' }}progress \
             ${{ inputs.template && format('-l {0}', inputs.template) || '' }}
 
     - shell: bash
